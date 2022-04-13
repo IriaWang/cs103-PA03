@@ -33,8 +33,8 @@ const courses = require('./public/data/courses20-21.json')
 // *********************************************************** //
 
 const mongoose = require( 'mongoose' );
-const mongodb_URI = 'mongodb://localhost:27017/cs103a_todo'
-//const mongodb_URI = 'mongodb+srv://cs_sj:BrandeisSpr22@cluster0.kgugl.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'
+//const mongodb_URI = 'mongodb://localhost:27017/cs103a_todo'
+const mongodb_URI = 'mongodb+srv://cs_sj:BrandeisSpr22@cluster0.kgugl.mongodb.net/IriaWang?retryWrites=true&w=majority'
 
 mongoose.connect( mongodb_URI, { useNewUrlParser: true, useUnifiedTopology: true } );
 // fix deprecation warnings
@@ -222,7 +222,7 @@ function time2str(time){
   const meetingType = time['type'] || "Lecture"
   const location = time['building'] || ""
 
-  return `${meetingType}: ${days.join(",")}: ${min2HourMin(start)}-${min2HourMin(end)} ${location}`
+  return `${meetingType}: ${days.join(',')}: ${min2HourMin(start)}-${min2HourMin(end)} ${location}`
 }
 
 
@@ -237,10 +237,15 @@ app.get('/upsertDB',
   async (req,res,next) => {
     //await Course.deleteMany({})
     for (course of courses){
-      const {subject,coursenum,section,term}=course;
+      const {subject,coursenum,section,term,times}=course;
       const num = getNum(coursenum);
       course.num=num
       course.suffix = coursenum.slice(num.length)
+      if (!times || times.length==0){
+        course.strTimes = ["not scheduled"]
+      } else {
+        course.strTimes = times.map(x => time2str(x))
+      }
       await Course.findOneAndUpdate({subject,coursenum,section,term},course,{upsert:true})
     }
     const num = await Course.find({}).count();
@@ -256,7 +261,7 @@ app.post('/courses/bySubject',
     const courses = await Course.find({subject:subject,independent_study:false}).sort({term:1,num:1,section:1})
     
     res.locals.courses = courses
-    res.locals.times2str = times2str
+    //res.locals.times2str = times2str
     //res.json(courses)
     res.render('courselist')
   }
@@ -268,7 +273,7 @@ app.get('/courses/show/:courseId',
     const {courseId} = req.params;
     const course = await Course.findOne({_id:courseId})
     res.locals.course = course
-    res.locals.times2str = times2str
+    //res.locals.times2str = times2str
     //res.json(course)
     res.render('course')
   }
@@ -295,7 +300,7 @@ app.post('/courses/byInst',
                .sort({term:1,num:1,section:1})
     //res.json(courses)
     res.locals.courses = courses
-    res.locals.times2str = times2str
+    //res.locals.times2str = times2str
     res.render('courselist')
   }
 )
@@ -308,7 +313,7 @@ app.post('/courses/byKeyword',
     const courses = await Course.find({name:word,independent_study:false}).sort({term:1,num:1,section:1})
     
     res.locals.courses = courses
-    res.locals.times2str = times2str
+    //res.locals.times2str = times2str
     //res.json(courses)
     res.render('courselist')
   }
@@ -392,7 +397,7 @@ app.use(function(err, req, res, next) {
 //  Starting up the server!
 // *********************************************************** //
 //Here we set the port to use between 1024 and 65535  (2^16-1)
-const port = "5000";
+const port = "4999";
 app.set("port", port);
 
 // and now we startup the server listening on that port
