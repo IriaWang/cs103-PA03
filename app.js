@@ -300,6 +300,24 @@ app.post('/courses/byInst',
   }
 )
 
+
+app.post('/courses/byKeyword',
+  // show list of courses in a given subject
+  async (req,res,next) => {
+    const {word} = req.body;
+    const courses = await Course.find({name:word,independent_study:false}).sort({term:1,num:1,section:1})
+    
+    res.locals.courses = courses
+    res.locals.times2str = times2str
+    //res.json(courses)
+    res.render('courselist')
+  }
+)
+
+
+
+
+
 app.use(isLoggedIn)
 
 app.get('/addCourse/:courseId',
