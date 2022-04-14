@@ -1,6 +1,6 @@
 # CS103a Express App Demo
 
-This is a starter project which has a simple authentication module and provides access to a mongoose database in the cloud.
+This is a starter project which has a simple authentication module and provides access to a mongoose database or cloud db in the cloud. 
 
 ## Installation
 Download the project from github in your folder of choice with
