@@ -310,7 +310,7 @@ app.post('/courses/byKeyword',
   // show list of courses in a given subject
   async (req,res,next) => {
     const {word} = req.body;
-    var regex = new RegExp(word, "g")
+    var regex = new RegExp(word, "gi")
     const courses = await Course.find({name:regex,independent_study:false}).sort({term:1,num:1,section:1})
     
     res.locals.courses = courses
