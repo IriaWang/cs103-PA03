@@ -2,7 +2,7 @@
 <% for (course of courses) {   
     %>
     <div class="bg-light m-5 p-2 border border-primary border-2">
-        <a href="/schedule/remove/<%= course._id %>">X</a>
+        <a href="/schedule/remove/<%= course._id %>" style="float:right;">X</a>
         <div class="">
             <span>
                 <%= course.subject %> 
